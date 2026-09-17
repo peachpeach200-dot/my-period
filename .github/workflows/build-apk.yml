@@ -54,6 +54,35 @@ jobs:
       - name: Install TypeScript
         run: npm install --save-dev typescript
 
+      - name: Prepare web assets
+        run: |
+          mkdir -p www
+
+          cp index.html www/index.html
+
+          if [ -f manifest.webmanifest ]; then
+            cp manifest.webmanifest www/manifest.webmanifest
+          fi
+
+          if [ -f sw.js ]; then
+            cp sw.js www/sw.js
+          fi
+
+          if [ -f native-notifications.js ]; then
+            cp native-notifications.js www/native-notifications.js
+          fi
+
+          if [ -f icon-192.png ]; then
+            cp icon-192.png www/icon-192.png
+          fi
+
+          if [ -f icon-512.png ]; then
+            cp icon-512.png www/icon-512.png
+          fi
+
+          echo "===== WWW CONTENT ====="
+          find www -maxdepth 2 -type f -print
+
       - name: Add Android platform
         run: npx cap add android
 
