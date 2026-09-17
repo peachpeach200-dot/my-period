@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#ff9fbd">
+<meta name="theme-color" content="#ff9fbd"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link id="appIconLink" rel="icon" href="icon-192.png">
 <title>♡ My Period ♡</title>
 <style>
 *{box-sizing:border-box}
@@ -54,21 +54,73 @@ h2{font-size:17px;margin:0 0 14px}.section-title{display:flex;justify-content:sp
 .day.ovulation{background:#fff4d8}.day.fertile{background:#f1edff}.day.logged{border:1px solid #d8c2e8}
 .install-box{background:linear-gradient(145deg,#fff0f5,#fff8f2);border:1px dashed #ef9db7;border-radius:20px;padding:15px;margin-top:10px}
 .notice{padding:11px 13px;background:#fff7df;border-radius:14px;font-size:11px;color:#8a6c35;line-height:1.6}
-</style>
 
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="application-name" content="My Period">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="My Period">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<style>
-#splash{position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#fff0f5,#fffaf7);display:flex;align-items:center;justify-content:center;transition:opacity .45s}
-#splash.hide{opacity:0;pointer-events:none}.splash-inner{text-align:center}.splash-logo{width:104px;height:104px;border-radius:32px;margin:auto;display:grid;place-items:center;background:#fff;box-shadow:0 15px 40px #d989a530;font-size:52px}.splash-title{font-weight:850;font-size:22px;margin-top:15px}.splash-sub{font-size:11px;color:#a17d89;margin-top:3px}
-.install-pwa{display:none}.install-pwa.show{display:block}
+/* ===== My Period Safe Journal v3.1 ===== */
+:root{
+ --accent:#e9789d; --accent-soft:#ffe4ed; --surface:#ffffffee;
+}
+body{transition:background .35s ease,color .25s ease;overflow-x:hidden}
+.app{padding-bottom:104px}
+header{position:sticky;top:0;z-index:15;background:#fffaf7d9;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.logo{letter-spacing:.2px}
+.page.active{animation:pageIn .28s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{transition:transform .2s ease,box-shadow .2s ease}
+.card:active{transform:scale(.995)}
+.tabs{grid-template-columns:repeat(5,1fr);height:78px}
+.tab span{transition:transform .2s ease}
+.tab.active span{transform:translateY(-2px) scale(1.08)}
+.soft-title{font-size:20px;font-weight:850;margin:0}
+.hero{overflow:hidden;position:relative}
+.hero:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:#fff;opacity:.25;right:-70px;top:-80px}
+.big-journal{background:linear-gradient(145deg,#fff,#fff7fa);min-height:170px}
+.journal-toolbar{display:flex;gap:7px;overflow:auto;padding:4px 0 8px}
+.tool-chip{flex:0 0 auto;border:1px solid #f1d5df;background:#fff;border-radius:999px;padding:9px 12px;color:var(--rose);font-size:12px;font-weight:750}
+.journal-board{position:relative;min-height:330px;border-radius:22px;overflow:hidden;background:radial-gradient(circle at 20% 20%,#fff 0 2px,transparent 3px),linear-gradient(145deg,#fffdfb,#fff5f7);background-size:28px 28px,100% 100%;border:1px dashed #efc9d6;touch-action:none}
+.journal-item{position:absolute;left:50px;top:50px;min-width:55px;min-height:55px;display:flex;align-items:center;justify-content:center;transform-origin:center;user-select:none;touch-action:none;cursor:grab}
+.journal-item img{max-width:115px;max-height:115px;object-fit:contain;border-radius:14px;filter:drop-shadow(0 5px 6px #8b536426)}
+.journal-item.emoji{font-size:45px;line-height:1}
+.journal-item.selected{outline:2px solid var(--rose);outline-offset:4px}
+.journal-controls{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.journal-controls button{padding:9px 11px;border-radius:13px;background:#fff2f6;color:var(--rose);font-size:12px;font-weight:750}
+.draw-wrap{background:#fff;border:1px solid #f0d7e0;border-radius:20px;padding:8px}
+#drawCanvas{display:block;width:100%;height:250px;border-radius:15px;background:#fffdfb;touch-action:none}
+.color-preview{width:100%;height:48px;border-radius:16px;border:1px solid #f0d5df;box-shadow:inset 0 0 0 5px #fff}
+.color-palette{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.saved-color{height:38px;border-radius:13px;border:3px solid #fff;box-shadow:0 2px 8px #00000015}
+.hsl-row{display:grid;grid-template-columns:60px 1fr 45px;align-items:center;gap:8px;font-size:11px;color:var(--muted)}
+.hsl-row input{width:100%}
+.swatch-row{display:flex;gap:8px;flex-wrap:wrap}
+.icon-preview{width:112px;height:112px;border-radius:27px;object-fit:cover;background:#fff0f5;border:1px solid #efd4de;box-shadow:0 10px 25px #d989a530;display:block;margin:8px auto}
+.jar-stage{display:flex;justify-content:center;align-items:center;min-height:290px;perspective:700px}
+.jar{width:190px;height:235px;border:5px solid #d7b5bf;border-top:12px solid #c9a2ad;border-radius:32px 32px 45px 45px;background:linear-gradient(90deg,#ffffff55,#fff6f877,#ffffff55);box-shadow:inset 0 0 35px #fff,0 18px 30px #9b647222;position:relative;overflow:hidden;transition:transform .25s}
+.jar.tall{height:250px;border-radius:38px 38px 28px 28px}
+.jar:before{content:"";position:absolute;left:25px;top:-20px;width:135px;height:35px;border-radius:12px;background:#c9a2ad}
+.jar-label{position:absolute;bottom:16px;left:18px;right:18px;text-align:center;background:#fffaf7d9;border:1px solid #efd5df;border-radius:14px;padding:7px;font-size:11px;font-weight:800}
+.jar-emojis{position:absolute;inset:18px;display:flex;align-content:flex-end;align-items:flex-end;justify-content:center;gap:3px;flex-wrap:wrap;overflow:hidden}
+.jar-emojis span{font-size:30px;display:inline-block;animation:jarFloat 2.6s ease-in-out infinite}
+@keyframes jarFloat{0%,100%{transform:translateY(2px) rotate(-3deg)}50%{transform:translateY(-5px) rotate(3deg)}}
+.safe-note{padding:13px;border-radius:17px;background:#fff8e9;color:#80683a;font-size:11px;line-height:1.65;border:1px solid #f1e0b7}
+.modal.show .sheet{animation:sheetIn .28s ease}
+@keyframes sheetIn{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+#splash{position:fixed;inset:0;z-index:200;background:linear-gradient(145deg,#fff0f5,#fffaf7);display:flex;align-items:center;justify-content:center;transition:opacity .35s}
+.splash-inner{text-align:center}.splash-flower{font-size:62px;animation:splashPop .7s ease}.splash-inner h1{margin:10px 0 2px;color:#8b5364}.splash-inner p{margin:0;color:#a17d89;font-size:12px}
+@keyframes splashPop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1)}}
+body.safe-mode:after{content:"";position:fixed;inset:0;pointer-events:none;border:2px solid #ffffff66;z-index:180}
+@media(max-width:380px){.card{margin-left:10px;margin-right:10px;padding:16px}.day{min-height:47px}.tabs{padding-left:4px;padding-right:4px}.tab{font-size:10px}}
+
 </style>
 </head>
-<body><div id="splash"><div class="splash-inner"><div class="splash-logo">🌸</div><div class="splash-title">My Period</div><div class="splash-sub">my little cycle tracker</div></div></div>
+<body>
+
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-flower">🌷</div>
+    <h1>My Period</h1>
+    <p>พื้นที่เล็ก ๆ สำหรับดูแลความรู้สึกของเรา</p>
+  </div>
+</div>
+
 
 <div id="pinScreen" class="pin-screen" style="display:none">
   <div class="pin-box">
@@ -127,6 +179,41 @@ h2{font-size:17px;margin:0 0 14px}.section-title{display:flex;justify-content:sp
   <div class="card"><h2>📝 บันทึกย้อนหลัง</h2><div id="logs"></div></div>
 </section>
 
+
+<section id="journal" class="page">
+  <div class="card big-journal">
+    <div class="section-title"><div><h2 class="soft-title">📖 สมุดชีวิตของฉัน</h2><div class="mini" id="journalDateLabel">วันนี้</div></div><button class="link" onclick="openLog()">+ บันทึก</button></div>
+    <p class="small-note">เขียนความรู้สึก แปะรูป อีโมจิ สติ๊กเกอร์ หรือวาดเล่นได้ เหมือนสมุดส่วนตัว</p>
+    <div class="journal-toolbar">
+      <button class="tool-chip" onclick="addJournalEmoji()">😊 แปะอีโมจิ</button>
+      <button class="tool-chip" onclick="addJournalImage()">🖼️ แปะรูป</button>
+      <button class="tool-chip" onclick="openDraw()">✏️ วาดรูป</button>
+      <button class="tool-chip" onclick="saveJournalNote()">📝 เขียนโน้ต</button>
+    </div>
+    <div id="journalBoard" class="journal-board"></div>
+    <div class="journal-controls" id="journalControls" style="display:none">
+      <button onclick="journalMove(-5,0)">←</button><button onclick="journalMove(5,0)">→</button>
+      <button onclick="journalMove(0,-5)">↑</button><button onclick="journalMove(0,5)">↓</button>
+      <button onclick="journalRotate(-10)">↶ เอียง</button><button onclick="journalRotate(10)">↷ เอียง</button>
+      <button onclick="journalScale(.9)">−</button><button onclick="journalScale(1.1)">＋</button>
+      <button class="danger" onclick="deleteJournalItem()">🗑 ลบ</button>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🫙 โหลอารมณ์ประจำเดือน</h2>
+    <div class="row">
+      <button class="secondary" onclick="setJarShape('round')">🫙 กลม</button>
+      <button class="secondary" onclick="setJarShape('tall')">🥫 สูง</button>
+    </div>
+    <div class="jar-stage"><div id="emotionJar" class="jar"><div id="jarEmojis" class="jar-emojis"></div><div class="jar-label" id="jarLabel">อารมณ์ของเดือนนี้</div></div></div>
+    <div id="jarSummary" class="small-note" style="text-align:center"></div>
+  </div>
+  <div class="card">
+    <h2>🛡️ พื้นที่ปลอดภัย</h2>
+    <div class="safe-note">ข้อมูลบันทึกส่วนตัวเก็บในเครื่องนี้เป็นหลัก และสามารถสำรองข้อมูลด้วยเมนู Backup/Restore ได้ อย่าใช้ข้อมูลในแอปนี้แทนคำแนะนำทางการแพทย์</div>
+  </div>
+</section>
+
 <section id="settings" class="page">
   <div class="card">
     <h2>⚙️ ตั้งค่ารอบเดือน</h2>
@@ -159,247 +246,4 @@ h2{font-size:17px;margin:0 0 14px}.section-title{display:flex;justify-content:sp
   </div>
   <div class="card">
     <h2>🔔 แจ้งเตือน</h2>
-    <div class="field"><label>แจ้งเตือนก่อนวันที่คาดการณ์ (วัน)</label><input id="remindDays" type="number" min="0" max="30"></div>
-    <div class="field"><label>เวลาแจ้งเตือน</label><input id="remindTime" type="time"></div>
-    <div class="settings-item switch"><div><b>เปิดการแจ้งเตือนในแอป</b><small>ต้องอนุญาต Notification จากเบราว์เซอร์ก่อน</small></div><input id="notifyToggle" type="checkbox" onchange="toggleNotifications(this.checked)"></div>
-    <button class="secondary" onclick="requestNotifications()">🔔 ขออนุญาตแจ้งเตือน</button>
-  </div>
-  <div class="card">
-    <h2>📱 ติดตั้งลงเครื่อง</h2>
-    <div class="install-box">
-      <b>ติดตั้งเป็นแอป (PWA)</b>
-      <p class="small-note">เมื่อเอาไฟล์นี้ไปโฮสต์ผ่าน HTTPS แล้วเปิดด้วย Chrome บน Android สามารถกดเมนู ⋮ → “เพิ่มไปยังหน้าจอหลัก” หรือ “ติดตั้งแอป” ได้</p>
-      <button id="installBtn" class="secondary install-pwa" onclick="installPWA()">📲 ติดตั้งแอป</button><button class="secondary" onclick="showToast('โฮสต์ผ่าน HTTPS แล้วกดติดตั้งแอปได้เลย')">วิธีติดตั้ง</button>
-    </div>
-  </div>
-  <div class="card">
-    <h2>🔐 ความเป็นส่วนตัว</h2>
-    <div class="settings-item switch"><div><b>ล็อกแอปด้วย PIN</b><small>ข้อมูลยังเก็บอยู่ในเครื่องนี้</small></div><input id="pinToggle" type="checkbox" onchange="togglePin(this.checked)"></div>
-    <div class="settings-item"><button class="secondary" onclick="changePin()">เปลี่ยน PIN</button></div>
-    <div class="settings-item"><button class="secondary" onclick="exportData()">ส่งออกข้อมูล</button> <button class="secondary" onclick="importData()">นำเข้าข้อมูล</button></div>
-    <div class="settings-item"><button class="secondary danger" onclick="clearData()">ลบข้อมูลทั้งหมด</button></div>
-  </div>
-  <div class="card">
-    <h2>🎀 ธีม</h2>
-    <div class="row">
-      <button class="secondary" onclick="setTheme('pink')">🌸 Pink</button>
-      <button class="secondary" onclick="setTheme('lavender')">🪻 Lavender</button>
-      <button class="secondary" onclick="setTheme('peach')">🍑 Peach</button>
-      <button class="secondary" onclick="setTheme('mint')">🍃 Mint</button>
-      <button class="secondary" onclick="setTheme('blue')">🫧 Blue</button>
-      <button class="secondary" onclick="setTheme('dark')">🌙 Night</button>
-    </div>
-    <div class="settings-item"><b>🎨 ปรับสีเอง</b><small>เลือกสีพื้นหลัง สีหลัก และสีปุ่มได้อิสระ</small></div>
-    <div class="row" style="align-items:center">
-      <label class="mini">พื้นหลัง <input id="bgColor" type="color" value="#fffaf7" onchange="setCustomColor('bg',this.value)"></label>
-      <label class="mini">สีหลัก <input id="accentColor" type="color" value="#ff9fbd" onchange="setCustomColor('accent',this.value)"></label>
-      <label class="mini">สีรอง <input id="accent2Color" type="color" value="#ffd6e3" onchange="setCustomColor('accent2',this.value)"></label>
-    </div>
-    <div class="settings-item">
-      <label>🖼️ พื้นหลังรูปภาพ</label>
-      <input id="bgImageFile" type="file" accept="image/*" onchange="setBackgroundImage(event)">
-      <button class="secondary" onclick="clearBackgroundImage()">ลบรูปพื้นหลัง</button>
-      <small>รูปจะเก็บไว้ในเครื่องนี้ ไม่อัปโหลดขึ้นเว็บ</small>
-    </div>
-    <div class="row">
-      <button class="secondary" onclick="setBackgroundMode('color')">พื้นสี</button>
-      <button class="secondary" onclick="setBackgroundMode('gradient')">ไล่สี</button>
-      <button class="secondary" onclick="setBackgroundMode('image')">ใช้รูป</button>
-    </div>
-  </div>
-</section>
-</main>
-
-<nav class="tabs">
-<button class="tab active" onclick="showPage('home',this)"><span>🏠</span>หน้าหลัก</button>
-<button class="tab" onclick="showPage('calendar',this)"><span>📅</span>ปฏิทิน</button>
-<button class="tab" onclick="showPage('stats',this)"><span>📊</span>สถิติ</button>
-<button class="tab" onclick="showPage('settings',this)"><span>⚙️</span>ตั้งค่า</button>
-</nav>
-</div>
-
-<div id="logModal" class="modal" onclick="if(event.target===this)closeModal('logModal')">
-<div class="sheet"><button class="close" onclick="closeModal('logModal')">×</button><h2>📝 บันทึกวันนี้</h2>
-<div class="field"><label>วันที่</label><input id="logDate" type="date"></div>
-<div class="field"><label>ปริมาณประจำเดือน</label><select id="flow"><option value="">ไม่ได้มีประจำเดือน</option><option value="น้อย">🩸 น้อย</option><option value="ปานกลาง">🩸🩸 ปานกลาง</option><option value="มาก">🩸🩸🩸 มาก</option></select></div>
-<div class="field"><label>อารมณ์</label><div class="moods" id="moods"></div></div>
-<div class="field"><label>อาการ</label><div class="moods" id="symptoms"></div></div>
-<div class="field"><label>โน้ต</label><textarea id="note" placeholder="วันนี้เป็นยังไงบ้าง..."></textarea></div>
-<button class="primary" onclick="saveLog()">♡ บันทึก</button>
-</div></div>
-
-<div id="dayModal" class="modal" onclick="if(event.target===this)closeModal('dayModal')"><div class="sheet"><button class="close" onclick="closeModal('dayModal')">×</button><div id="dayContent"></div></div></div>
-<div id="toast" class="toast"></div>
-<input id="fileImport" type="file" accept=".json" style="display:none" onchange="doImport(event)">
-
-<script type="module" src="./native-notifications.js"></script>
-<script>
-const KEY='myPeriodApp_v1';
-let data=JSON.parse(localStorage.getItem(KEY)||'null')||{
- startDate:'',manualNext:'',cycleLength:28,periodLength:5,logs:{},pinEnabled:false,pin:'',theme:'pink',bgColor:'#fffaf7',accentColor:'#ff9fbd',accent2Color:'#ffd6e3',bgImage:'',bgMode:'color',shortCycle:26,longCycle:32,ovulationDay:14,fertileBefore:5,calcMode:'cycle',remindDays:2,remindTime:'09:00',notifyEnabled:false
-};
-let viewDate=new Date(); let pinBuffer=''; let selectedMood=''; let selectedSymptoms=[];
-
-const moods=[['😊','ดี'],['🙂','ปกติ'],['😐','เฉยๆ'],['😣','หงุดหงิด'],['😴','เหนื่อย']];
-const symptoms=['ปวดท้อง','ปวดหลัง','ปวดหัว','ท้องอืด','เหนื่อย','ง่วง','สิว','คลื่นไส้','อยากอาหาร','อื่นๆ'];
-
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function fmt(d){return new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'long',year:'numeric'}).format(d)}
-function iso(d){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
-function parse(s){if(!s)return null;let [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
-function addDays(d,n){let x=new Date(d);x.setDate(x.getDate()+n);return x}
-function diff(a,b){return Math.round((parse(a)-parse(b))/86400000)}
-function showToast(t){let e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1800)}
-function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');if(id==='calendar')renderCalendar();if(id==='stats')renderStats();if(id==='settings')loadSettings()}
-function nextDate(){if(!data.startDate)return null;if(data.calcMode==='manual'&&data.manualNext)return parse(data.manualNext);return addDays(parse(data.startDate),Number(data.cycleLength)||28)}
-function renderHome(){
- let n=nextDate(),today=new Date(),t=iso(today);
- document.getElementById('statCycle').textContent=(data.cycleLength||'—')+' วัน';
- document.getElementById('statPeriod').textContent=(data.periodLength||'—')+' วัน';
- if(!n){document.getElementById('countdown').textContent='—';document.getElementById('countUnit').textContent='ไปตั้งค่าวันที่กันก่อนนะ';document.getElementById('nextDate').textContent='';return}
- let days=Math.ceil((new Date(n.getFullYear(),n.getMonth(),n.getDate())-new Date(today.getFullYear(),today.getMonth(),today.getDate()))/86400000);
- document.getElementById('countdown').textContent=Math.abs(days);
- document.getElementById('countUnit').textContent=days>0?'วัน':'วันที่ถึงกำหนดแล้ว';
- document.getElementById('countTitle').textContent=days>0?'ประจำเดือนครั้งถัดไป':days===0?'คาดว่าเป็นวันนี้':'เลยวันที่คาดไว้แล้ว';
- document.getElementById('nextDate').textContent=fmt(n);
- let start=data.startDate?parse(data.startDate):null;
- let pct=start?Math.max(0,Math.min(100,(diff(iso(today),data.startDate)/(data.cycleLength||28))*100)):0;
- document.getElementById('progressBar').style.width=pct+'%';
- document.getElementById('cycleText').textContent=start?`วันนี้ประมาณวันที่ ${Math.max(1,diff(t,data.startDate)+1)} ของรอบ ${data.cycleLength} วัน`:'';
- let l=data.logs[t];
- document.getElementById('todaySummary').innerHTML=l?`<div style="font-size:13px">อารมณ์: ${l.mood||'—'} · ปริมาณ: ${l.flow||'—'}<br>${(l.symptoms||[]).join(' · ')||'ไม่มีอาการ'}${l.note?'<br>“'+escapeHtml(l.note)+'”':''}</div>`:'ยังไม่ได้บันทึกวันนี้';
-}
-function renderCalendar(){
- let y=viewDate.getFullYear(),m=viewDate.getMonth();
- document.getElementById('monthTitle').textContent=new Intl.DateTimeFormat('th-TH',{month:'long',year:'numeric'}).format(viewDate);
- let first=new Date(y,m,1),last=new Date(y,m+1,0),html='';
- for(let i=0;i<first.getDay();i++)html+='<div class="day empty"></div>';
- let start=data.startDate?parse(data.startDate):null,next=nextDate(),today=iso(new Date());
- for(let d=1;d<=last.getDate();d++){
-   let date=new Date(y,m,d),s=iso(date),isPeriod=start&&date>=start&&date<addDays(start,Number(data.periodLength)||5);
-   let pred=next&&date>=next&&date<addDays(next,Number(data.periodLength)||5);
-   let l=data.logs[s];
-   html+=`<button class="day ${s===today?'today ':''}${isPeriod?'period ':''}${pred?'pred ':''}" onclick="selectDay('${s}')"><b>${d}</b>${isPeriod?'<div class="dot period-dot">●</div>':''}${l?'<div class="dot note-dot">♥</div>':''}</button>`;
- }
- document.getElementById('days').innerHTML=html;
-}
-function moveMonth(n){viewDate.setMonth(viewDate.getMonth()+n);renderCalendar()}
-function selectDay(s){
- let d=parse(s),l=data.logs[s],start=data.startDate?parse(data.startDate):null,next=nextDate();
- let isPeriod=start&&d>=start&&d<addDays(start,Number(data.periodLength)||5);
- let pred=next&&d>=next&&d<addDays(next,Number(data.periodLength)||5);
- document.getElementById('dayContent').innerHTML=`<h2>📅 ${fmt(d)}</h2>
- <p>${isPeriod?'🩸 อยู่ในช่วงประจำเดือนที่กำหนด':pred?'🌸 อยู่ในช่วงที่คาดการณ์':''}</p>
- ${l?`<div class="card" style="margin:10px 0;padding:15px;background:#fff6f9"><b>บันทึก</b><br>อารมณ์: ${l.mood||'—'}<br>ปริมาณ: ${l.flow||'—'}<br>อาการ: ${(l.symptoms||[]).join(', ')||'—'}<br>${l.note?'โน้ต: '+escapeHtml(l.note):''}</div>`:'<p class="mini">ยังไม่มีบันทึกในวันนี้</p>'}
- <button class="primary" onclick="closeModal('dayModal');openLog('${s}')">📝 บันทึกวันนี้</button>`;
- document.getElementById('dayModal').classList.add('show');
-}
-function openLog(date=iso(new Date())){
- document.getElementById('logDate').value=date;let l=data.logs[date]||{};
- document.getElementById('flow').value=l.flow||'';document.getElementById('note').value=l.note||'';
- selectedMood=l.mood||'';selectedSymptoms=l.symptoms||[];renderChoices();
- document.getElementById('logModal').classList.add('show');
-}
-function renderChoices(){
- document.getElementById('moods').innerHTML=moods.map(x=>`<button class="mood ${selectedMood===x[1]?'on':''}" onclick="selectedMood='${x[1]}';renderChoices()"><b>${x[0]}</b>${x[1]}</button>`).join('');
- document.getElementById('symptoms').innerHTML=symptoms.map(x=>`<button class="mood ${selectedSymptoms.includes(x)?'on':''}" onclick="toggleSymptom('${x}')"><b>${selectedSymptoms.includes(x)?'✓':'+'}</b>${x}</button>`).join('');
-}
-function toggleSymptom(x){selectedSymptoms=selectedSymptoms.includes(x)?selectedSymptoms.filter(a=>a!==x):[...selectedSymptoms,x];renderChoices()}
-function saveLog(){
- let s=document.getElementById('logDate').value;if(!s)return;
- data.logs[s]={flow:document.getElementById('flow').value,mood:selectedMood,symptoms:selectedSymptoms,note:document.getElementById('note').value};
- save();closeModal('logModal');renderHome();renderCalendar();showToast('บันทึกเรียบร้อย ♡');
-}
-function loadSettings(){
- startDate.value=data.startDate||'';manualNext.value=data.manualNext||'';cycleLength.value=data.cycleLength||28;periodLength.value=data.periodLength||5;pinToggle.checked=!!data.pinEnabled;shortCycle.value=data.shortCycle||26;longCycle.value=data.longCycle||32;ovulationDay.value=data.ovulationDay||14;fertileBefore.value=data.fertileBefore||5;remindDays.value=data.remindDays??2;remindTime.value=data.remindTime||'09:00';notifyToggle.checked=!!data.notifyEnabled;document.getElementById('bgColor').value=data.bgColor||'#fffaf7';document.getElementById('accentColor').value=data.accentColor||'#ff9fbd';document.getElementById('accent2Color').value=data.accent2Color||'#ffd6e3';applyBackground();setCalcMode(data.calcMode||'cycle');
-}
-function setCalcMode(mode){
- data.calcMode=mode;
- let a=document.getElementById('modeCycle'),b=document.getElementById('modeManual');
- if(a&&b){a.classList.toggle('on',mode==='cycle');b.classList.toggle('on',mode==='manual')}
-}
-function saveDetailedCycle(){
- data.shortCycle=Math.max(1,Number(shortCycle.value)||26);
- data.longCycle=Math.max(data.shortCycle,Number(longCycle.value)||32);
- data.ovulationDay=Math.max(1,Number(ovulationDay.value)||14);
- data.fertileBefore=Math.max(0,Number(fertileBefore.value)||5);
- data.remindDays=Math.max(0,Number(remindDays.value)||0);
- data.remindTime=remindTime.value||'09:00';
- save();renderHome();renderCalendar();showToast('บันทึกรอบละเอียดแล้ว 🌙');scheduleReminder();
-}
-async function requestNotifications(){
- if(window.NativeNotify?.isNative?.()){let ok=await window.NativeNotify.request();if(ok){data.notifyEnabled=true;notifyToggle.checked=true;save();showToast('เปิดการแจ้งเตือนแบบแอปแล้ว 🔔');scheduleReminder()}else showToast('ยังไม่ได้รับอนุญาตแจ้งเตือน');return}
- if(!('Notification' in window)){showToast('เบราว์เซอร์นี้ไม่รองรับแจ้งเตือน');return}
- let p=await Notification.requestPermission();
- if(p==='granted'){data.notifyEnabled=true;notifyToggle.checked=true;save();showToast('เปิดการแจ้งเตือนแล้ว 🔔');scheduleReminder()}
- else showToast('ยังไม่ได้รับอนุญาตแจ้งเตือน');
-}
-async function toggleNotifications(on){
- if(on){await requestNotifications()}else{data.notifyEnabled=false;save();showToast('ปิดการแจ้งเตือนแล้ว')}
-}
-async function scheduleReminder(){
- if(!data.notifyEnabled)return;
- let n=nextDate();if(!n)return;
- let when=new Date(n);when.setDate(when.getDate()-Number(data.remindDays||0));
- let [hh,mm]=(data.remindTime||'09:00').split(':').map(Number);when.setHours(hh,mm,0,0);
- if(window.NativeNotify?.isNative?.()){if(when.getTime()>Date.now()){await window.NativeNotify.schedule(when,'🌸 My Period',`ใกล้ถึงวันที่คาดการณ์ประจำเดือนแล้ว — ${fmt(n)}`)}return}
- if(!('Notification' in window)||Notification.permission!=='granted')return;
- let delay=when.getTime()-Date.now();
- if(delay>0&&delay<2147483647){clearTimeout(window.periodReminderTimer);window.periodReminderTimer=setTimeout(()=>{new Notification('🌸 My Period',{body:`ใกล้ถึงวันที่คาดการณ์ประจำเดือนแล้ว — ${fmt(n)}`});scheduleReminder()},delay)}
-}
-function saveSettings(){
- data.startDate=startDate.value;data.manualNext=manualNext.value;data.cycleLength=Math.max(1,Number(cycleLength.value)||28);data.periodLength=Math.max(1,Number(periodLength.value)||5);data.shortCycle=Math.max(1,Number(shortCycle.value)||26);data.longCycle=Math.max(data.shortCycle,Number(longCycle.value)||32);data.ovulationDay=Math.max(1,Number(ovulationDay.value)||14);data.fertileBefore=Math.max(0,Number(fertileBefore.value)||5);data.remindDays=Math.max(0,Number(remindDays.value)||0);data.remindTime=remindTime.value||'09:00';save();scheduleReminder();renderHome();renderCalendar();showToast('บันทึกการตั้งค่าแล้ว 🌸');
-}
-function openSettings(){showPage('settings',document.querySelectorAll('.tab')[3])}
-function closeModal(id){document.getElementById(id).classList.remove('show')}
-function renderStats(){
- let arr=[];
- if(data.startDate){let s=parse(data.startDate);for(let i=0;i<12;i++){let st=addDays(s,-(data.cycleLength||28)*i);arr.push({date:iso(st),len:data.cycleLength||28,period:data.periodLength||5})}}
- document.getElementById('history').innerHTML=arr.length?arr.map((x,i)=>`<div class="settings-item"><b>รอบ ${arr.length-i}</b><small>เริ่ม ${fmt(parse(x.date))} · ประมาณ ${x.len} วัน · ประจำเดือน ${x.period} วัน</small></div>`).join(''):'<div class="empty">ตั้งค่าวันเริ่มรอบก่อนนะ</div>';
- let keys=Object.keys(data.logs).sort().reverse();
- document.getElementById('logs').innerHTML=keys.length?keys.slice(0,30).map(k=>{let l=data.logs[k];return `<div class="settings-item"><b>${fmt(parse(k))}</b><small>${l.mood||'ไม่มีอารมณ์'} · ${l.flow||'ไม่มีประจำเดือน'} · ${(l.symptoms||[]).join(', ')||'ไม่มีอาการ'}</small></div>`}).join(''):'<div class="empty">ยังไม่มีบันทึก</div>';
-}
-function togglePin(on){
- if(on&&!data.pin){let p=prompt('ตั้ง PIN 4–8 หลัก');if(!/^[0-9]{4,8}$/.test(p||'')){pinToggle.checked=false;showToast('PIN ต้องเป็นตัวเลข 4–8 หลัก');return}data.pin=p}
- data.pinEnabled=on;save();showToast(on?'เปิดล็อก PIN แล้ว 🔐':'ปิดล็อก PIN แล้ว');
-}
-function changePin(){
- let old=prompt('ใส่ PIN เดิม');if(old!==data.pin){showToast('PIN เดิมไม่ถูกต้อง');return}
- let p=prompt('ตั้ง PIN ใหม่ 4–8 หลัก');if(!/^[0-9]{4,8}$/.test(p||'')){showToast('PIN ไม่ถูกต้อง');return}data.pin=p;data.pinEnabled=true;save();loadSettings();showToast('เปลี่ยน PIN แล้ว');
-}
-function pinKey(k){if(pinBuffer.length<8)pinBuffer+=k;updatePin()}
-function pinClear(){pinBuffer=pinBuffer.slice(0,-1);updatePin()}
-function updatePin(){document.getElementById('pinDots').textContent='●'.repeat(pinBuffer.length)+'○'.repeat(4-pinBuffer.length);if(pinBuffer.length>=4){}}
-function pinSubmit(){
- if(pinBuffer===data.pin){document.getElementById('pinScreen').style.display='none';pinBuffer='';updatePin()}
- else{document.getElementById('pinMsg').textContent='PIN ไม่ถูกต้อง';pinBuffer='';updatePin();setTimeout(()=>document.getElementById('pinMsg').textContent='',1000)}
-}
-function initPin(){if(data.pinEnabled&&data.pin){document.getElementById('pinScreen').style.display='flex'}}
-function setCustomColor(kind,value){if(kind==='bg')data.bgColor=value;if(kind==='accent')data.accentColor=value;if(kind==='accent2')data.accent2Color=value;data.theme='custom';save();applyBackground();showToast('บันทึกสีแล้ว 🎨')}
-function setBackgroundMode(mode){data.bgMode=mode;save();applyBackground();showToast('เปลี่ยนพื้นหลังแล้ว ✨')}
-function setBackgroundImage(e){let f=e.target.files[0];if(!f)return;if(f.size>3*1024*1024){showToast('รูปใหญ่เกิน 3MB');e.target.value='';return}let r=new FileReader();r.onload=()=>{data.bgImage=r.result;data.bgMode='image';save();applyBackground();showToast('ใช้รูปพื้นหลังแล้ว 🖼️')};r.readAsDataURL(f)}
-function clearBackgroundImage(){data.bgImage='';data.bgMode='color';save();applyBackground();showToast('ลบรูปพื้นหลังแล้ว')}
-function applyBackground(){let r=document.documentElement;let bg=data.bgColor||'#fffaf7',a=data.accentColor||'#ff9fbd',a2=data.accent2Color||'#ffd6e3';r.style.setProperty('--pink',a);r.style.setProperty('--pink2',a2);r.style.setProperty('--pink3',bg);if(data.bgMode==='image'&&data.bgImage){document.body.style.backgroundImage=`url(\"${data.bgImage}\")`;document.body.style.backgroundSize='cover';document.body.style.backgroundAttachment='fixed';document.body.style.backgroundPosition='center'}else if(data.bgMode==='gradient'){document.body.style.backgroundImage=`linear-gradient(135deg, ${bg}, ${a2})`;document.body.style.backgroundSize='cover';document.body.style.backgroundAttachment='fixed'}else{document.body.style.backgroundImage='none';document.body.style.backgroundColor=bg}}
-function setTheme(t){
- data.theme=t;data.bgMode='color';data.bgImage='';
- const p={pink:['#fffaf7','#ff9fbd','#ffd6e3'],lavender:['#faf7ff','#b69be8','#e4d9fb'],peach:['#fffaf5','#ffae88','#ffe0d1'],mint:['#f5fffb','#7bc9a7','#ccefe0'],blue:['#f5fbff','#79bde8','#cfeeff'],dark:['#17141b','#c88cff','#33263d']}[t]||['#fffaf7','#ff9fbd','#ffd6e3'];
- data.bgColor=p[0];data.accentColor=p[1];data.accent2Color=p[2];save();applyBackground();loadSettings();showToast('เปลี่ยนธีมแล้ว ✨')
-}
-function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-period-backup.json';a.click();URL.revokeObjectURL(a.href)}
-function importData(){document.getElementById('fileImport').click()}
-function doImport(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x||typeof x!=='object')throw 0;data=x;save();location.reload()}catch{showToast('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f)}
-function clearData(){if(confirm('ลบข้อมูลทั้งหมดจากเครื่องนี้จริงหรือไม่?')){localStorage.removeItem(KEY);location.reload()}}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-if(data.theme==='custom'){applyBackground();}else{setTheme(data.theme||'pink');}renderHome();loadSettings();renderCalendar();initPin();scheduleReminder();
-
-let deferredInstallPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;let b=document.getElementById('installBtn');if(b)b.classList.add('show')});
-async function installPWA(){
- if(!deferredInstallPrompt){showToast('ถ้ายังไม่ขึ้นปุ่มติดตั้ง ให้เปิดผ่าน Chrome บน HTTPS');return}
- deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt=null;
-}
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
-window.addEventListener('load',()=>setTimeout(()=>document.getElementById('splash')?.classList.add('hide'),650));
-</script>
-</body>
-</html>
+    <div class="field"><label>แจ้งเ
